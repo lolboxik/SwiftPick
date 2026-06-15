@@ -47,4 +47,5 @@ public interface IAuthService
     Task<AuthResultDto> RegisterAsync(RegisterDto dto);
     Task<AuthResultDto> LoginAsync(LoginDto dto);
     Task<AuthResultDto> LoginWithProviderAsync(string provider, string providerId, string email, string? firstName, string? lastName);
+    Task<AuthResultDto> ChangePasswordAsync(string userId, ChangePasswordDto dto);
 }

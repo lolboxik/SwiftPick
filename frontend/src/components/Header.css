@@ -79,6 +79,39 @@
   gap: 1rem;
 }
 
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.theme-toggle.dark-active {
+  background: rgba(232, 168, 56, 0.14);
+  border-color: rgba(232, 168, 56, 0.45);
+  color: #e8a838;
+}
+
+.theme-toggle.dark-active:hover {
+  background: rgba(232, 168, 56, 0.22);
+}
+
+.theme-toggle.light-active {
+  background: rgba(0, 0, 0, 0.07);
+  border-color: rgba(0, 0, 0, 0.22);
+  color: #111;
+}
+
+.theme-toggle.light-active:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
 .cart-btn {
   position: relative;
   color: #fff;
@@ -119,11 +152,13 @@
   cursor: pointer;
   padding: 0.5rem 0.85rem;
   background: #333;
+  border: none;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.95rem;
+  font-family: inherit;
 }
 
 .user-dropdown {
@@ -225,6 +260,17 @@
 
   .header-actions {
     gap: 0.75rem;
+  }
+
+  .user-menu {
+    position: relative;
+  }
+
+  .user-name {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .auth-buttons {

@@ -52,7 +52,6 @@ public class AuthService : IAuthService
             };
         }
 
-        // Assign user role by default
         await _userManager.AddToRoleAsync(user, "User");
 
         var token = await GenerateJwtToken(user);
@@ -125,7 +124,6 @@ public class AuthService : IAuthService
         
         if (user == null)
         {
-            // Create new user
             user = new ApplicationUser
             {
                 UserName = email,
@@ -175,6 +173,39 @@ public class AuthService : IAuthService
             FirstName = user.FirstName,
             LastName = user.LastName,
             Roles = roles.ToList()
+        };
+    }
+
+    public async Task<AuthResultDto> ChangePasswordAsync(string userId, ChangePasswordDto dto)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return new AuthResultDto
+            {
+                Success = false,
+                Error = "Пользователь не найден"
+            };
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+        if (!result.Succeeded)
+        {
+            return new AuthResultDto
+            {
+                Success = false,
+                Error = string.Join(", ", result.Errors.Select(e => e.Description))
+            };
+        }
+
+        return new AuthResultDto
+        {
+            Success = true,
+            UserId = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Roles = (await _userManager.GetRolesAsync(user)).ToList()
         };
     }
 

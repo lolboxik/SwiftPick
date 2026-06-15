@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SwiftPick.Core.DTOs;
@@ -54,6 +55,25 @@ public class AuthController : ControllerBase
         {
             return BadRequest(result);
         }
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<ActionResult<AuthResultDto>> ChangePassword([FromBody] ChangePasswordDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        var result = await _authService.ChangePasswordAsync(userId, dto);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
         return Ok(result);
     }
 }

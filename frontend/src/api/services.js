@@ -50,6 +50,14 @@ export const authService = {
     return localStorage.getItem('token');
   },
 
+  async changePassword(currentPassword, newPassword) {
+    const response = await api.post('/auth/change-password', {
+      currentPassword,
+      newPassword
+    });
+    return response.data;
+  },
+
   isAuthenticated() {
     return !!localStorage.getItem('token');
   },

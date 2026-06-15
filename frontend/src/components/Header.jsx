@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import './Header.css';
 
-export default function Header() {
+export default function Header({ theme, onToggleTheme }) {
   const { user, logout, isAdmin } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
@@ -17,8 +17,19 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
+    setDropdownOpen(false);
     logout();
     navigate('/');
+  };
+
+  const toggleDropdown = () => {
+    clearTimeout(hideTimer.current);
+    setDropdownOpen((isOpen) => !isOpen);
+  };
+
+  const navigateFromDropdown = (path) => {
+    setDropdownOpen(false);
+    navigate(path);
   };
 
   return (
@@ -38,6 +49,16 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
+          <button
+            className={`theme-toggle ${theme === 'light' ? 'light-active' : 'dark-active'}`}
+            onClick={onToggleTheme}
+            aria-label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+            title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+            type="button"
+          >
+            {theme === 'light' ? '●' : '☀'}
+          </button>
+
           <button className="cart-btn" onClick={() => navigate('/cart')}>
             Корзина
             {itemCount > 0 && <span className="cart-count">{itemCount}</span>}
@@ -49,13 +70,19 @@ export default function Header() {
               onMouseEnter={() => { clearTimeout(hideTimer.current); setDropdownOpen(true); }}
               onMouseLeave={() => { hideTimer.current = setTimeout(() => setDropdownOpen(false), 500); }}
             >
-              <span className="user-name">
+              <button
+                className="user-name"
+                onClick={toggleDropdown}
+                aria-expanded={dropdownOpen}
+                aria-haspopup="menu"
+                type="button"
+              >
                 {user.firstName || user.email}
-              </span>
-              <div className="user-dropdown">
-                <button className="dropdown-item" onClick={() => navigate('/profile')}>Профиль</button>
-                <button className="dropdown-item" onClick={() => navigate('/orders')}>Заказы</button>
-                <button onClick={handleLogout} className="dropdown-item logout">
+              </button>
+              <div className="user-dropdown" role="menu">
+                <button className="dropdown-item" onClick={() => navigateFromDropdown('/profile')} role="menuitem">Профиль</button>
+                <button className="dropdown-item" onClick={() => navigateFromDropdown('/orders')} role="menuitem">Заказы</button>
+                <button onClick={handleLogout} className="dropdown-item logout" role="menuitem">
                   Выйти
                 </button>
               </div>
